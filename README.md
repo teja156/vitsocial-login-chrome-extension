@@ -1,1 +1,2 @@
-Simple extension to convert session cookie to QR code, so that the mobile app can scan the QR code, get the cookies and initiate login attempt. Login is implemented this way because VTOP vellore and ap (as of now) uses re-captcha by google
+Simple extension to convert session cookie to QR code, so that the mobile app can scan the QR code, get the cookies and initiate login attempt. Login is implemented this way because VTOP vellore and ap (as of now) uses re-captcha by google. The app can then scrap student info that is necessary to join the VITSocial network. This info includes student name, register number, email ID and so on. These details are stored on the database.
+
