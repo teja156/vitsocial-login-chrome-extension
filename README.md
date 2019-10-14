@@ -1,0 +1,1 @@
+Simple extension to convert session cookie to QR code, so that the mobile app can scan the QR code, get the cookies and initiate login attempt. Login is implemented this way because VTOP vellore and ap (as of now) uses re-captcha by google
