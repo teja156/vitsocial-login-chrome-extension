@@ -2,13 +2,6 @@
     "name" : "VITSocial-Login",
     "version" : "1.0",
     "manifest_version" : 2,
-    "content_scripts" : [
-        {
-            "matches" : ["https://vtop.vit.ac.in/vtop/initialProcess","https://vtop.vitap.ac.in/vtop/initialProcess"],
-            "js" : ["check_login.js"]
-        }
-    ],
-    
     "browser_action" : {
         "default_popup" : "popup.html",
         "default_title" : "VITSocial Login"
@@ -16,9 +9,9 @@
     },
     "permissions" : [
         "cookies",
-        "*://*.vtop.vit.ac.in/vtop/initialProcess",
-        "*://*.vtop.vitap.ac.in/vtop/initialProcess",
-        "tabs"
+        "<all_urls>",
+        "tabs",
+        "storage"
     ]
     
 }

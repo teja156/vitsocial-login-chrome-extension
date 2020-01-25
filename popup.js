@@ -1,9 +1,12 @@
 
 var all_cookies = "";
 var click_count=0;
+var url= "";
+var campus = "";
+
 function getCookies(callback)
 {
-    chrome.cookies.getAll({"url":"https://vtop.vit.ac.in/vtop/initialProcess"},callback)
+    chrome.cookies.getAll({"url":url},callback)
 }
 
 function printCookie(cookies)
@@ -13,6 +16,9 @@ function printCookie(cookies)
             all_cookies = all_cookies + cookies[i].name + ":" + cookies[i].value+";";
         }
     
+    //document.getElementById("authentication_params").value = all_cookies;
+    
+        
     //document.getElementById("disp").textContent = all_cookies;
     
 }
@@ -36,43 +42,89 @@ function generateQR()
 }
 
 
-const confirmvtop = info => {
-    //alert("REcvd from content: "+info.url);
-    
-    
-  if(info.url=="https://vtop.vit.ac.in/vtop/initialProcess" || info.url=="https://vtop.vitap.ac.in/vtop/initialProcess")
-      {
-          document.getElementById("msg").textContent = "You are on VTOP! Make sure you login to your account first before generating the QR code."
-          document.getElementById("msg").style.color = "green"
-          document.getElementById("genqr").disabled = false;
-          
-      }
-    
-};
-
-
-
-window.onload= function()
+function authenticate_vtop()
 {
-    getCookies(printCookie);
-    document.getElementById("genqr").addEventListener("click",generateQR);
+    document.write(all_cookies);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  // ...query for the active tab...
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, tabs => {
-    // ...and send a request for the login info...
-    chrome.tabs.sendMessage(
-        tabs[0].id,
-        {from: 'popup', subject: 'LoginInfo'},
-        // ...also specifying a callback to be called 
-        //    from the receiving end (content script).
-        confirmvtop);
-  });
-});
+
+
+
+window.onload = function()
+{
+    
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        
+        url = tabs[0].url;
+
+        campus = checkVTOP(url);
+        if(campus!="")
+            {
+                getCookies(printCookie);
+                
+            }
+    });
+    
+    
+    document.getElementById("authenticate-btn").onclick = function()
+    {
+        chrome.tabs.create({url:chrome.runtime.getURL("send_post_req.html")});
+    }
+    
+}
+
+
+
+function getCookies(callback)
+{
+    
+    chrome.cookies.getAll({"url":url},callback);
+}
+
+function printCookie(cookies)
+{   
+    
+    for(var i=0;i<cookies.length;i++)
+        {
+            all_cookies = all_cookies + '"' + cookies[i].name + '"' + ":" + '"' + cookies[i].value+ '"' + ",";
+        }
+    
+    //document.getElementById("authentication_params").value = all_cookies;
+    
+        
+    //document.getElementById("disp").textContent = all_cookies;
+    
+
+    
+    chrome.storage.local.set({
+            cookies: all_cookies,
+            campus : campus
+        }, function () {
+            chrome.tabs.executeScript({
+                file: "post.js"
+            });
+        });
+    
+}
+
+
+function checkVTOP(url)
+{
+    if(url.search("vtopcc.vit.ac.in:8080/vtop/initialProcess")!=-1)
+        campus = "chennai";
+    else if(url.search("vtop.vit.ac.in/vtop/initialProcess")!=-1)
+        campus = "vellore";
+    else if(url.search("vtop2.vitap.ac.in:8070/vtop/initialProcess")!=-1)
+        campus = "ap";
+    
+    return campus;
+    
+}
+
+
+
+
+
 
 
 
